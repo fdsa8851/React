@@ -3,8 +3,12 @@ import { useState } from 'react';
 import React from 'react';
 import styled from 'styled-components';
 import Button from '@mui/material/Button';
-import 
+import './../../server';
+import { Connection } from 'mysql2/typings/mysql/lib/Connection';
   
+
+
+
 function Article(props) {
   return (
     <div>

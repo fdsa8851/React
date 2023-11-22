@@ -13,7 +13,16 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const defaultTheme = createTheme();
-
+//const navigate = useNavigate();
+function SingUp () {
+    
+  return (
+    <div> 
+      <Link to="/SignUp">
+      </Link>
+    </div>
+  )
+}
 export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -23,6 +32,15 @@ export default function SignIn() {
       password: data.get('password'),
     });
   };
+
+  
+
+
+  //유저 정보 가져오기
+  // function LoginCon () {
+  //   fetch("./../server.js", reqOption).then((res) => res.json())
+  //   .then(data => console.log(data));   
+  // }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -72,11 +90,19 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              로그인
+            </Button>
+            <Button
+              type="button"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 0, mb: 1 }}
+              href="/SignUp"
+            >회원가입
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="/SignUp" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
