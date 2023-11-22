@@ -5,3 +5,7 @@
 문제 발생시
 
 nap install -save react-scripts 사용
+
+mysql 비밀번호 문제 
+ER_ACCESS_DENIED_ERROR 에러 발생시
+alter user 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'admin1'
