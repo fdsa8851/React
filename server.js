@@ -18,26 +18,36 @@ const connection = mysql.createConnection({
 const express = require('express')
 const app = express()
 
-app.get('/', function (req, res) {
+app.get('/member', function (req, res) {
   res.send('Hello World')
 });
 
-app.get('/sound', function (req, res) {
+app.get('/member', function (req, res) {
   res.json({"sound" : "sound"});
 });
 
-app.get('/member', function (req, res) {
+app.post('/member', function (req, res) {
   res.json('Hello World member')
 });
 
-app.get('/member/SignUp', function(req,res) {
+app.post('/userData', function(req,res) {
+  connection.query(
+    'INSERT INTO user (id, pw, email, name) VALUES ('\?', '\?', '\?', '\?')', 
+    function(err, result, field) {
+      res.send(result[0]);
+      console.log(result[0]);
+    }
+  )
+})
+
+app.get('/userData', function(req,res) {
   connection.query(
     'SELECT * FROM user',
     function(err, result, field) {
-      res.send(result);
+      res.send(result[0]);
+      console.log(result[0]);
     }
   )
-  console.log(res);
 })
 
-app.listen(3001)
+app.listen(4000)

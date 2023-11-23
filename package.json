@@ -20,15 +20,17 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.19.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "styled-components": "^6.1.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node index.js",
+    "server": "cd server && nodemon server",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev" : "concurrently \"npm run server\" \"npm run start\""
   },
   "eslintConfig": {
     "extends": [
@@ -53,5 +55,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "proxy": "http://localhost:3000/member/SignUp"
+  "proxy": "http://localhost:3001/member/SignUp"
 }
