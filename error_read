@@ -1,0 +1,11 @@
+
+'react-scripts'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+배치 파일이 아닙니다
+
+문제 발생시
+
+nap install -save react-scripts 사용
+
+mysql 비밀번호 문제 
+ER_ACCESS_DENIED_ERROR 에러 발생시
+alter user 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'admin1'
