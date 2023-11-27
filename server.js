@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
   database : 'react_mysql'
 });
    
-//   with placeholder
+//   // with placeholder
 //   connection.query(
 //     // 'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
 //     // ['Page', 45],
@@ -37,36 +37,77 @@ app.use(cors())
 
 app.use(express.urlencoded({ extended: true}));
 
-app.get('/member', function (req, res) {
+app.get('/', function (req, res) {
   res.send('Hello World')
 });
 
-app.get('/member', function (req, res) {
+app.get('/sound', function (req, res) {
   res.json({"sound" : "sound"});
 });
 
-app.post('/member', function (req, res) {
+app.get('/member', function (req, res) {
   res.json('Hello World member')
 });
 
-app.post('/userData', function(req,res) {
-  connection.query(
-    'INSERT INTO user (id, pw, email, name) VALUES (?, ?, ?, ?)', 
+app.post('/login', function(req,res) {
+
+  const query = 'SELECT id, pw FROM user WHERE id = ? AND pw = ?';
+  const id = req.query.id;
+  const pw = req.query.pw;
+
+  console.log("req query : ", req.query);
+  console.log("req param :" ,req.params);
+  console.log("req body :" ,req.body);
+
+
+  //성공시 
+  connection.query(query, [id, pw],
     function(err, result, field) {
-      res.send(result[0]);
-      console.log(result[0]);
-    }
-  )
+      if(err) {
+        res.json(err)
+      } else {
+        res.json(result);
+      }  
+    });
 })
 
-app.get('/userData', function(req,res) {
-  connection.query(
-    'SELECT * FROM user',
+app.post('/user', function(req, res) {
+
+  const query = 'INSERT INTO user (id, pw) VALUES(?, ?)';
+  const values = [req.query.id, req.query.pw];
+
+  const userId = req.query.id === undefined ? req.query.id : req.params.id  
+  const userPw = req.query.pw === undefined ? req.query.pw : req.params.pw
+
+  console.log("req : ", req);
+
+  console.log("req pw", req.query.pw);
+  console.log("req id", req.query.id);
+
+  //postman 에서 데이터 테스트 할때 사용.
+  console.log("req query : ", req.query);
+
+  console.log("req param :" ,req.params);
+  console.log("req body :" ,req.body);
+
+
+  console.log("확인");
+  
+  connection.query(query, [userId, userPw],
     function(err, result, field) {
-      res.send(result);
-    }
-  )
-  console.log(res);
+      if(err) {
+        res.json(err)
+      } else {
+        if(result.length === 0) {
+          console.log("배열이 비었습니다.");
+        } else {
+          res.json(result);
+        }
+      }  
+    });
 })
 
-app.listen(3001)
+
+app.listen(3001, function () {
+  console.log('http server is listening on port 3001')
+})
