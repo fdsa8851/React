@@ -20,6 +20,7 @@ export default class SimpleSlider extends Component {
           <div>
             <img src='./../picture/picture2.jpg' alt="사진"></img>
           </div>
+          
         </Slider>
       </div>
     );
