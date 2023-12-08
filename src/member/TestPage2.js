@@ -7,66 +7,59 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import { useState } from 'react';
-
-// const columns = [
-//   { id: 'name', label: 'Name', minWidth: 170 },
-//   { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-//   {
-//     id: 'population',
-//     label: 'Population',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value) => value.toLocaleString('en-US'),
-//   },
-//   {
-//     id: 'size',
-//     label: 'Size\u00a0(km\u00b2)',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value) => value.toLocaleString('en-US'),
-//   },
-//   {
-//     id: 'density',
-//     label: 'Density',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value) => value.toFixed(2),
-//   },
-// ];
 
 const columns = [
-  { id: 'no', label: '번호', minWidth: 100 },
-  { id: 'title', label: '제목', minWidth: 170 },
-  { id: 'registId', label: '등록자', minWidth: 170, align: 'right'},
-  { id: 'registDate', label: '등록일시', minWidth: 170, align: 'right'},
-  { id: 'views', label: '조회수', minWidth: 170, align: 'right'},
+  { id: 'name', label: 'Name', minWidth: 170 },
+  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
+  {
+    id: 'population',
+    label: 'Population',
+    minWidth: 170,
+    align: 'right',
+    format: (value) => value.toLocaleString('en-US'),
+  },
+  {
+    id: 'size',
+    label: 'Size\u00a0(km\u00b2)',
+    minWidth: 170,
+    align: 'right',
+    format: (value) => value.toLocaleString('en-US'),
+  },
+  {
+    id: 'density',
+    label: 'Density',
+    minWidth: 170,
+    align: 'right',
+    format: (value) => value.toFixed(2),
+  },
 ];
 
-
-//function 을 만들고 사용하니 
-function createData(no, title, registId, registDate, views) {
-  return {no, title, registId, registDate, views};
+function createData(name, code, population, size) {
+  const density = population / size;
+  return { name, code, population, size, density };
 }
 
 const rows = [
-  createData('비밀', '제목입니다1.', '등록', '4', '1'),
-  createData('1', '제목입니다4.', '등록5', '5', '7'),
-  createData('2', '제목입니다2.', '등록2', '6', '8')
+  createData('India', 'IN', 1324171354, 3287263),
+  createData('China', 'CN', 1403500365, 9596961),
+  createData('Italy', 'IT', 60483973, 301340),
+  createData('United States', 'US', 327167434, 9833520),
+  createData('Canada', 'CA', 37602103, 9984670),
+  createData('Australia', 'AU', 25475400, 7692024),
+  createData('Germany', 'DE', 83019200, 357578),
+  createData('Ireland', 'IE', 4857000, 70273),
+  createData('Mexico', 'MX', 126577691, 1972550),
+  createData('Japan', 'JP', 126317000, 377973),
+  createData('France', 'FR', 67022000, 640679),
+  createData('United Kingdom', 'GB', 67545757, 242495),
+  createData('Russia', 'RU', 146793744, 17098246),
+  createData('Nigeria', 'NG', 200962417, 923768),
+  createData('Brazil', 'BR', 210147125, 8515767),
 ];
 
-function fileUpLoad() {
-  return (
-    <div>
-    </div>
-  );
-}
-
 export default function StickyHeadTable() {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -78,13 +71,8 @@ export default function StickyHeadTable() {
   };
 
   return (
-    
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <Stack direction='row' justifyContent='flex-end' spacing={2} margin={1}>
-      <Button variant="outlined" href="/Board/Write">등록</Button>
-      {/* <Button variant="outlined">목록</Button> */}
-      </Stack>
-     <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -104,19 +92,20 @@ export default function StickyHeadTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.title}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
-                        {value} 
+                          {column.format && typeof value === 'number'
+                            ? column.format(value)
+                            : value}
                         </TableCell>
                       );
                     })}
                   </TableRow>
                 );
               })}
-              <Button></Button>
           </TableBody>
         </Table>
       </TableContainer>
@@ -131,5 +120,4 @@ export default function StickyHeadTable() {
       />
     </Paper>
   );
-
 }

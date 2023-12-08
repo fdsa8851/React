@@ -20,7 +20,7 @@ const defaultTheme = createTheme();
 export default function SignIn() {
 
   const navigate = useNavigate();
-  const login = () => navigate('/Borad');
+  const login = () => navigate('/Board');
 
   const [inputId, setInputId] = useState("");
   const [inputPw, setInputPw] = useState("");

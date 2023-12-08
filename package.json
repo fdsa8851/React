@@ -30,9 +30,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "env-cmd -f .env.development react-scripts start",
+    "start": "react-scripts start",
     "server": "cd server && nodemon server",
-    "build": "env-cmd -f .env.production react-scripts build",
+    "build": "react-scripts build",
     "backend": "node server.js",
     "dev": "concurrently \" npm run backend\" \"npm run start"
   },
