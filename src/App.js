@@ -1,44 +1,22 @@
-import './App.css';
-import React from 'react';
-import SignIn from './member/SignIn';
-import { AppBar, Container, IconButton, MenuItem, Toolbar, Typography } from '@mui/material';
-import UserList from './member/UserList';
-import SignUp from './member/SignUp';
-import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Board from './member/Board';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./movieFolder/Home";
+import Detail from "./movieFolder/Detail";
 
 function App() {
-
-  return(
+  return (
     <BrowserRouter>
-        <div> 
-          <AppBar position="static">
-            <Toolbar variant='dense'>
-            <IconButton edge="start" color="inherit" aria-label="menu" sx={{}}>
-              <MenuItem></MenuItem>
-            </IconButton>
-            <Typography>
-              Top Menu 설정
-            </Typography>
-            </Toolbar>
-          </AppBar> 
-        </div>     
       <Routes>
-        {/* 웹 서비스 소개 페이지 */}
-        <Route path="/Borad" element={
-        <Board/>
-        }>
+        <Route
+          path="/"
+          element={<Home />}>
         </Route>
-        <Route path="/" element={
-        <SignIn/>
-        }>
+        <Route
+          path="/movie/:id"
+          element={<Detail />}>
         </Route>
-        <Route path="/SignUp" element={
-          <SignUp></SignUp>
-        }></Route>
       </Routes>
-    </BrowserRouter>     
-  )  
+    </BrowserRouter>
+  );
 }
 
 export default App;

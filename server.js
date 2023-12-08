@@ -69,38 +69,70 @@ app.post('/login', function(req,res) {
         res.json(result);
       }  
     });
-})
+});
 
-app.post('/user', function(req, res) {
+//id 중복 확인
+app.post('/idCheck', function(req,res) {
 
-  const query = 'INSERT INTO user (id, pw) VALUES(?, ?)';
-  const values = [req.query.id, req.query.pw];
+  const query = 'SELECT id FROM user where id = ?';
+  const id = req.query.id;
 
-  const userId = req.query.id === undefined ? req.query.id : req.params.id  
-  const userPw = req.query.pw === undefined ? req.query.pw : req.params.pw
+  console.log("id : " ,id);
+  console.log("idCheck 확인");
+  connection.query(query, id, function(err, result, field) {
+    console.log("result : ",result);
+    if(err) {
+      console.log(err);
+      res.json(err);
+    } else {
+      console.log("중복인지 아닌지 확인");
+      res.json(result);
+    }
+  });
+});
 
-  console.log("req : ", req);
+app.post('/Board/Write', function(req, res) {
 
-  console.log("req pw", req.query.pw);
-  console.log("req id", req.query.id);
+  const query = '';
+  const file = '';
+  console.log("여기오는지 확인" );
+  console.log("req ",req);
+  console.log("req 파람",req.params);
+  console.log("req body",req.body);
+
+});
+
+app.post('/SignUp', function(req, res) {
+
+  const query = 'INSERT INTO user (id, pw, email, name, regist_time) VALUES(?, ?, ?, ?, 1)';
+  const values = [req.query.id, req.query.pw, req.query.email, req.query.name];
+
+  const userId = req.query.id === undefined ? req.query.id : req.params.id; 
+  const userPw = req.query.pw === undefined ? req.query.pw : req.params.pw;
+  const userEmail = req.query.Email === undefined ? req.query.Email : req.params.Email;
+  const userName = req.query.Name === undefined ? req.query.Name : req.params.Name;
+
+  console.log("req pw", userPw);
+  console.log("req id", userId);
+  console.log("req Email", userEmail);
+  console.log("req name", userName);
 
   //postman 에서 데이터 테스트 할때 사용.
-  console.log("req query : ", req.query);
-
-  console.log("req param :" ,req.params);
-  console.log("req body :" ,req.body);
-
 
   console.log("확인");
   
-  connection.query(query, [userId, userPw],
+  connection.query(query, [req.query.id, req.query.pw, req.query.email, req.query.name],
     function(err, result, field) {
+
+      console.log("여기오는지 확인");
+
       if(err) {
         res.json(err)
       } else {
         if(result.length === 0) {
           console.log("배열이 비었습니다.");
         } else {
+          console.log("여기오는지 확인2");
           res.json(result);
         }
       }  
