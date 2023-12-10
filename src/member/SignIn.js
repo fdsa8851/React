@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+
 const defaultTheme = createTheme();
 
 export default function SignIn() {
@@ -44,6 +45,10 @@ export default function SignIn() {
       }}).then(function (response) {
           response.data.length === 0 ? alert("빈값입니다.") : login();
           console.log(response);
+
+          window.sessionStorage.setItem('id', inputId);
+          console.log("id값 확인 : " ,window.sessionStorage.getItem('id'));
+
       });    
   };
 

@@ -8,7 +8,7 @@ import SignUp from './member/SignUp';
 //import TestPage2 from './member/TestPage2';
 import Write from './member/Board/Write';
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Board from './member/Board';
+import Board from './member/Board/Board';
 import LeftMenu from "./component/LeftMenu";
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -32,7 +32,7 @@ function App() {
     }
     console.log("topMenu : ", topMenu);
 
-  });
+  }, [topMenu]);
 
   return(
     <BrowserRouter>
@@ -60,6 +60,9 @@ function App() {
         </Route>
         <Route path="/SignUp" element={
           <SignUp></SignUp>
+        }></Route>
+        <Route path="/Board/Write/:no" element={
+          <Write></Write>
         }></Route>
         <Route path="/Board/Write" element={
           <Write></Write>

@@ -5,15 +5,6 @@ const connection = mysql.createConnection({
   password : 'admin1',
   database : 'react_mysql'
 });
-   
-//   // with placeholder
-//   connection.query(
-//     // 'SELECT * FROM `table` WHERE `name` = ? AND `age` > ?',
-//     // ['Page', 45],
-//     function(err, results) {
-//       console.log(results);
-//     }
-//   );
 
 //cors 에러 대처 
 const express = require('express');
@@ -22,9 +13,6 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors')
 
 const app = express();
-
-
-
 // Access-Control-Allow-Origin 적용방법1: 직접 헤더에 적용
 app.all('/*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
@@ -34,19 +22,9 @@ app.all('/*', function (req, res, next) {
 
 // Access-Control-Allow-Origin 적용방법2: cors 미들웨어 사용
 app.use(cors())
-
 app.use(express.urlencoded({ extended: true}));
-
 app.get('/', function (req, res) {
   res.send('Hello World')
-});
-
-app.get('/sound', function (req, res) {
-  res.json({"sound" : "sound"});
-});
-
-app.get('/member', function (req, res) {
-  res.json('Hello World member')
 });
 
 app.post('/login', function(req,res) {
@@ -71,6 +49,22 @@ app.post('/login', function(req,res) {
     });
 });
 
+app.get('/Board', function(req, res) {
+
+  const query = 'SELECT * FROM board';
+
+  connection.query(query, '', function(err, result, field) {
+    console.log('board 실행');
+  
+    if(err) {
+      console.log('board 에러 입니다', err);
+    } else {
+      res.json(result);
+      console.log('실행성공', result);
+    }
+  });
+});
+
 //id 중복 확인
 app.post('/idCheck', function(req,res) {
 
@@ -91,16 +85,65 @@ app.post('/idCheck', function(req,res) {
   });
 });
 
-app.post('/Board/Write', function(req, res) {
+app.get('/Board/Regist', function(req, res) {
 
-  const query = '';
+  const query = 'SELECT title, content FROM board WHERE NO = ?';
+  const column = req.query;
+  const queryColumn = [column.no];
+
+  console.log("데이터 확인 : ", req.query);
+
+  connection.query(query, queryColumn,
+    function(err, result, field) {
+      if(err) {
+        console.log(err);
+        res.json(err);
+      } else {
+        console.log("result 확인 : ", result);
+        res.json(result);
+      }
+    });
+});
+
+//게시판 등록, 수정, 삭제
+app.post('/Board/Regist', function(req, res) {
+
   const file = '';
-  console.log("여기오는지 확인" );
-  console.log("req ",req);
-  console.log("req 파람",req.params);
-  console.log("req body",req.body);
+  const column = req.query;
+  const date = new Date()
+  let queryColumn = [];
+  let query = '';
+  console.log(typeof(column.state))
+  console.log('state값이 제대로 들어갔는가?', column);
+  if(column.state == "C") {
+      query ='INSERT INTO board (title, content, id, uDate) VALUES (?, ?, ?, ?)';
+      queryColumn = [column.title, column.content, column.create, date]; 
+      
+  } else if(column.state == "D") {
+    query ='DELETE FROM board WHERE no = ?';
+    queryColumn = [column.no];
+  } else {
+    query ='UPDATE board SET title = ?, content = ?, uDate = ? WHERE no = ?';
+    queryColumn = [column.title, column.content, date, column.no]; 
+  }
+  
+  console.log('쿼리값은 어떻게 나올것인가', query);
+
+  connection.query(query, queryColumn,
+    function(err, result, field) {
+
+      console.log("일단 쿼리 실행");
+
+      if(err) {
+        console.log('에러입니다 : ',err);
+      } else {
+        console.log('실행 성공');
+      }  
+    });
 
 });
+
+
 
 app.post('/SignUp', function(req, res) {
 
