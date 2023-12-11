@@ -132,11 +132,10 @@ app.post('/Board/Regist', function(req, res) {
   connection.query(query, queryColumn,
     function(err, result, field) {
 
-      console.log("일단 쿼리 실행");
-
       if(err) {
         console.log('에러입니다 : ',err);
       } else {
+        res.json(result);
         console.log('실행 성공');
       }  
     });
