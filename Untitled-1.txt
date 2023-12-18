@@ -2,7 +2,6 @@ const fs = require("fs"); //파일처리 관련 모듈 (fileSystem)
 const path = require("path"); //path설정
 const mysql = require("mysql2");
 const iconv_lite = require("iconv-lite");
-//const cookieParser = require('cookie-parser');
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -29,12 +28,11 @@ app.all("/*", function (req, res, next) {
 
 // Access-Control-Allow-Origin 적용방법2: cors 미들웨어 사용
 app.use(cors());
-//app.use(cookieParser());  //쿠기 관리를 위한 설정
-app.use(express.static(path.join(__dirname, "/src/member/image"))); //서버에 파일 확인을위한 접근 path?
+//app.use(express.urlencoded({ extended: true}));
 
 //POST 방식으로 전송된 form 데이터를 req 객체의 body 속성에 넣어주기 위해서 Node.js 서버에 아래와 같은 Body Parser 미들웨어를 추가한다.
-//app.use(express.json());
 
+//app.use(express.json());
 
 /** 빈값 확인 */
 function isEmptyObj(obj) {
@@ -51,7 +49,6 @@ try {
   console.error("upload 폴더가 없습니다. 폴더를 생성합니다.");
   fs.mkdirSync("upload");
 }
-
 
 //파일저장(업로드)
 const storage = multer.diskStorage({
@@ -116,7 +113,6 @@ app.post("/login", function (req, res) {
   });
 });
 
-//게시판 조회
 app.get("/Board", function (req, res) {
   const query = "SELECT * FROM board";
 
@@ -150,24 +146,6 @@ app.post("/idCheck", function (req, res) {
   });
 });
 
-//조회수
-app.post("/Board/View", function(req, res) {
-  const query = "UPDATE board SET viewCnt=viewCnt+1 WHERE no = ?";
-
-  console.log("조회수 확인 : " ,req.query);
-  const queryColumn =req.query.no;
-
-  connection.query(query, queryColumn, function (err, result, field) {
-    if (err) {
-      console.log(err);
-      res.json(err);
-    } else {
-      console.log(result);
-      res.json(result);
-    }
-  });
-});
-
 //상세조회
 app.get("/Board/Regist", function (req, res) {
   const query = "SELECT title, content, fileUrl FROM board WHERE NO = ?";
@@ -188,29 +166,43 @@ app.get("/Board/Regist", function (req, res) {
 });
 
 //게시판 등록, 수정, 삭제
-app.post("/Board/Regist", upload.single("file"), function (req, res) {
+app.post("/Board/Regist", upload.single("files"), function (req, res) {
   //데이터가 object 형태로 넘어오면 object가 string으로 바껴서 말그대로 object가 됨.
   //넘겨주기전에object일경우  JSON.Stringify를 시켜야 데이터 넘기기 가능.
 
-  const fileURL = boardFileName;
-  const column = JSON.parse(req.body.content);
+  const fileURL = path.join(__dirname, `./src/member/image/${boardFileName}`);
+  const column = JSON.parse(req.body.content); //
   const date = new Date();
   let queryColumn = [];
   let query = "";
-  
-  console.log('boardFileName:', boardFileName);
-  console.log('content값 확인 : ',req.body.content);  //fileURL은 
+
+  const directory = fs.existsSync(path);
+
+  // console.log("경로 확인 :" ,directory);
+  // console.log('content값 확인 : ',req.body.content);
+  // console.log('path :', path);
+
+  // if(directory && !isEmptyObj(req.body.file)) {
+
+  //    try {
+  //      const dataBytes = fs.readFileSync(file);
+  //      fs.writeFile(file, dataBytes, (err) => console.log(err));
+  //    } catch (err){
+  //      console.log(err);
+  //    }
+
+  // }
 
   if (column.state == "C") {
     query =
-      "INSERT INTO board (title, content, id, fileUrl, viewCnt, uDate) VALUES (?, ?, ?, ?, 0, ?)";
+      "INSERT INTO board (title, content, id, fileUrl, uDate) VALUES (?, ?, ?, ?, ?)";
     queryColumn = [column.title, column.content, column.create, fileURL, date];
   } else if (column.state == "D") {
     query = "DELETE FROM board WHERE no = ?";
     queryColumn = [column.no];
   } else if (column.state == "U") {
-    query = "UPDATE board SET title = ?, content = ?, fileUrl =?, uDate = ? WHERE no = ?";
-    queryColumn = [column.title, column.content, fileURL, date, column.no];
+    query = "UPDATE board SET title = ?, content = ?, uDate = ? WHERE no = ?";
+    queryColumn = [column.title, column.content, date, column.no];
   }
 
   console.log("쿼리값은 어떻게 나올것인가", query);

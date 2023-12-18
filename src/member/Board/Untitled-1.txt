@@ -15,66 +15,49 @@ function Write() {
   const no = location.state === null ? null : location.state.no;
 
   const url = "http://localhost:3001/Board/Regist";
-  const viewUrl = "http://localhost:3001/Board/View";
+  //const serverUrl = "http://localhost:3001/";
   const formData = new FormData();
   const [content, setContent] = useState({
     title: "",
     content: "",
     create: id, //userId 넣는 란.
-    //fileUrl: "",  //헷갈려서 삭제
+    fileUrl: "",
     no: no,
-    view : ""
   }); //게시판 내용
 
   const fileInputRef = useRef(); //file
   const [title, setTitle] = useState("");
   const [cont, setCont] = useState("");
   const [selectFile, setSelectFile] = useState(null); //formData 넘겨줄때 사용
-  const [viewFile, setViewFile] = useState(null); //게시된 임시 이미지 화면에 표시
-  const [detailView, setDetailView] = useState(null); //등록된 이미지 화면에 표시 (상세조회)
+  const [viewFile, setViewFile] = useState(null); //게시된 파일 이미지 화면에 표시
 
   useEffect(() => {}, [content]);
 
   useEffect(() => {
-
-    localStorage.setItem('board_no', no);
-
-    if (no !== null) {
-      boardDetail(); //상세조회
-      view();
-    }
+    // if (no !== null) {
+    //   boardDetail(); //상세조회
+    // }
   }, []);
 
-  //조회수
-  const view = async() => {
-    console.log("no",no);
-    try {
-      const addViewCnt = axios.post(viewUrl, null, {
-        params : {no : no}
-      });
-    } catch(err) {
-      console.log(err);
-    }
-  }
   //상세조회
   const boardDetail = async () => {
     try {
       const response = await axios.get(url, { params: content });
       setTitle(response.data[0].title);
       setCont(response.data[0].content);
-      setSelectFile(response.data[0].fileUrl);
-      setDetailView(response.data[0].fileUrl);
+      //setViewFile(response.data[0].fileUrl);
+      fileHandler(response.data[0].fileUrl);
     } catch (err) {
       console.log("Error : ", err);
     }
-
+    console.log("나오는지 확인");
   };
 
   //form Submit 하는곳
   const formSubmit = (e) => { 
     e.preventDefault();
-    setData();
-    //test();
+    //setData();
+    test();
   };
 
   //파일 관련 핸들러
@@ -85,18 +68,36 @@ function Write() {
 
     setSelectFile(uploadFile); //formData넘겨줄 파일
 
-    const reader = new FileReader(); //FileReader 객체 생성
-    reader.readAsDataURL(uploadFile);
-    reader.onloadend = () => {
-      setViewFile(reader.result);
-    };
+  
+      console.log('확인');
+      formData.append('file', selectFile);
+      try {
+      const reponse = await axios.post(url, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              //application/json
+              //multipart/form-data
+              //application/x-www-form-urlencoded
+            },
+          });
+          console.log(reponse);
+          window.alert("완료 되었습니다.");
+        } catch (err) {
+          console.log("Error : ", err);
+        }
+  
 
+    // const reader = new FileReader(); //FileReader 객체 생성
+    // reader.readAsDataURL(uploadFile);
+    // reader.onloadend = () => {
+    //   setSelectFile(reader.result);
+    // };
   };
 
   //input 버튼 클릭
-  // const handleClickFileInput = () => {
-  //   fileInputRef.current.click();
-  // };
+  const handleClickFileInput = () => {
+    fileInputRef.current.click();
+  };
 
   //내용 입력 Handler
   const setContentHandler = (e) => {
@@ -122,10 +123,8 @@ function Write() {
     //object 형태를 json 으로 변환
     let selectState = "";
 
-    console.log(content);
-
     formData.append("file", selectFile);
-    formData.append("content", JSON.stringify(content));
+    //formData.append("content", JSON.stringify(content));
 
     if (content.state === "C") {
       selectState = "등록";
@@ -181,7 +180,7 @@ function Write() {
       <h1>게시판 등록 하는 곳 입니다.</h1>
       <hr />
       <form onSubmit={formSubmit}>
-      <table>
+        <table>
           <thead></thead>
           <tbody>
             <tr>
@@ -208,18 +207,19 @@ function Write() {
               </td>
             </tr>
             <tr>
-              <th></th>
+              <th>파일 선택11</th>
               <td>
-              <input
+                <input
                   type="file"
                   onChange={fileHandler}
                   accept=".png, .jpg,image/*"
                   name="upload"
                   ref={fileInputRef}
                 ></input>
-                {
-                  detailView !== null && viewFile === null ?<img src ={`http://localhost:3001/${detailView}`}></img> : <img src={viewFile} img="img"></img>
-                }
+                <button type="button" onClick={handleClickFileInput}>
+                  파일업로드
+                </button>
+                <img src={selectFile} img="img"></img>
               </td>
             </tr>
           </tbody>
@@ -253,12 +253,12 @@ function Write() {
               삭제
             </button>
           </div>
-        )}        
+        )}
       </form>
       <hr />
       <button>
         <Link to="/Board">목록</Link>
-      </button>      
+      </button>
     </div>
   );
 }
