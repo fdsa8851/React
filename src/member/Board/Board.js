@@ -18,8 +18,8 @@ const columns = [
   { id: 'no', label: '번호', minWidth: 100 },
   { id: 'title', label: '제목', minWidth: 170 },
   { id: 'id', label: '등록자', minWidth: 170, align: 'right'},
-  { id: 'iDate', label: '등록일시', minWidth: 170, align: 'right'},
-  { id: 'views', label: '조회수', minWidth: 170, align: 'right'},
+  { id: 'cDate', label: '등록일시', minWidth: 170, align: 'right'},
+  { id: 'viewCnt', label: '조회수', minWidth: 170, align: 'right'},
 ];
 
 export default function StickyHeadTable() {

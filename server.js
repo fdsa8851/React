@@ -87,16 +87,6 @@ const multerConfig = {
 
 const upload = multer(multerConfig);
 
-// const multipart = require('connect-multiparty');
-// app.use(multipart())
-
-// const form_data = multer();
-// const bodyParser = require('body-parser');
-
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({extended: false}));
-//app.use(form_data.array());
-
 app.post("/login", function (req, res) {
   const query = "SELECT id, pw FROM user WHERE id = ? AND pw = ?";
   const id = req.query.id;
@@ -152,39 +142,46 @@ app.post("/idCheck", function (req, res) {
 
 //조회수
 app.post("/Board/View", function(req, res) {
-  const query = "UPDATE board SET viewCnt=viewCnt+1 WHERE no = ?";
 
-  console.log("조회수 확인 : " ,req.query);
-  const queryColumn =req.query.no;
+  console.log("조회수 확인 : " ,res);
 
-  connection.query(query, queryColumn, function (err, result, field) {
-    if (err) {
-      console.log(err);
-      res.json(err);
-    } else {
-      console.log(result);
-      res.json(result);
-    }
-  });
 });
 
 //상세조회
 app.get("/Board/Regist", function (req, res) {
   const query = "SELECT title, content, fileUrl FROM board WHERE NO = ?";
+  const uQuery = "UPDATE board SET viewCnt=viewCnt+1 WHERE no = ?";
+  let returnResult = [];
   const column = req.query;
-  const queryColumn = [column.no];
 
   console.log("데이터 확인 : ", req.query);
 
-  connection.query(query, queryColumn, function (err, result, field) {
+  connection.query(query, [column.no], function (err, result, field) {
     if (err) {
       console.log(err);
       res.json(err);
     } else {
-      console.log(result);
-      res.json(result);
+      console.log('column.viewCnt :' ,column.viewCnt);
+      if(column.viewCnt != 1) {
+        res.json(result);
+      }
+      returnResult.push(result);
     }
   });
+
+  if(column.viewCnt == 1) {
+    console.log('column.viewCnt : 실행확인: ',column.viewCnt);
+    connection.query(uQuery, [column.viewCnt, column.no], function (err, result, field) {
+      if (err) {
+        console.log(err);
+        res.json(err);
+      } else {
+        returnResult.push(result);
+        console.log('returnResult :', returnResult);
+        res.json(returnResult);
+      }
+    });  
+  }
 });
 
 //게시판 등록, 수정, 삭제
