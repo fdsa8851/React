@@ -11,6 +11,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Board from './member/Board/Board';
 import LeftMenu from "./component/LeftMenu";
 import MenuIcon from '@mui/icons-material/Menu';
+import TopMenu from './adornment/TopeMenu';
 
 
 function App() {
@@ -36,17 +37,8 @@ function App() {
 
   return(
     <BrowserRouter>
-        <div> 
-          <AppBar position="static">
-            <Toolbar variant='dense'>
-              <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr : 2}}>
-              <MenuIcon/>
-              </IconButton>
-            <Typography>
-              {topMenu}
-            </Typography>
-            </Toolbar>
-          </AppBar> 
+        <div>
+          <TopMenu></TopMenu>
         </div>     
       <Routes>
         {/* 웹 서비스 소개 페이지 */}

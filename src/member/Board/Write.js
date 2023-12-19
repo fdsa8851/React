@@ -18,14 +18,6 @@ function Write() {
   const url = "http://localhost:3001/Board/Regist";
   const viewUrl = "http://localhost:3001/Board/View";
   const formData = new FormData();
-  const [content, setContent] = useState({
-    title: "",
-    content: "",
-    create: id, //userId 넣는 란.
-    //fileUrl: "",  //헷갈려서 삭제
-    no: no,
-    viewCnt : 0,
-  }); //게시판 내용
 
   const fileInputRef = useRef(); //file
   const [title, setTitle] = useState("");
@@ -33,18 +25,24 @@ function Write() {
   const [selectFile, setSelectFile] = useState(null); //formData 넘겨줄때 사용
   const [viewFile, setViewFile] = useState(null); //게시된 임시 이미지 화면에 표시
   const [detailView, setDetailView] = useState(null); //등록된 이미지 화면에 표시 (상세조회)
+  const [content, setContent] = useState({
+    title: "",
+    content: "",
+    create: id, //userId 넣는 란.
+    no: no
+  }); //게시판 내용
   
   const [cookies, setCookie, removeCookie] = useCookies(['viewDuplieCntChk']); //쿠키 관리
 
-
+  //쿠키가 있거나 viewCnt 값이 변경될때만 상세조회를 실행한다.
   useEffect(() => {
-    console.log('content :',content);
+
   }, [content]);
 
   useEffect(() => {
 
     if (no !== null) {
-      boardDetail(); //상세조회
+      boardDetail();
     }
   }, []);
 
@@ -59,30 +57,32 @@ function Write() {
   //     console.log(err);
   //   }
   // }
+
   //상세조회
   const boardDetail = async () => {
 
     const time = 3600 * 24; //24시간
     const expiration = new Date(Date.now() + time * 1000);
-    //board_no , id값
+    setCookie(`board_${no}`, id, { path: "/", expires: expiration }); 
 
-    if(cookies[`board_${no}`] === undefined) {
-      setCookie(`board_${no}`, id, { path: "/", expires: expiration });
-      setContent({...content, 'viewCnt' : 1});
+    //쿠키를 이용하여 조회수 중복 안되게 수정
+    const keys = Object.keys(cookies);
+    if((keys.includes(`board_${no}`)) == false) {
+        try {
+          const response = await axios.get(viewUrl, { params: {'no':no}});
+          console.log(response);
+        } catch(err) {
+          console.log('view err : ', err);
+        } 
     }
-    
-    //if(cookies.name(`board_${id}`))
 
-
-    // setCookie('키값', (true <- https 로 받은 데이터만 사용한다, false 그 반대),'데이터값',{path,expires,maxAge...})
-    //setContent({'board_id': `board_${id}`});
- 
+    //상세조회
     try {
       const response = await axios.get(url, { params: content });
-      // setTitle(response.data[0][0].title);
-      // setCont(response.data[0][0].content);
-      // setSelectFile(response.data[0][0].fileUrl);
-      // setDetailView(response.data[0][0].fileUrl);
+      setTitle(response.data[0].title);
+      setCont(response.data[0].content);
+      setSelectFile(response.data[0].fileUrl);
+      setDetailView(response.data[0].fileUrl);
       
     } catch (err) {
       console.log("Error : ", err);

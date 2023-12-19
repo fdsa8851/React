@@ -141,17 +141,29 @@ app.post("/idCheck", function (req, res) {
 });
 
 //조회수
-app.post("/Board/View", function(req, res) {
+app.get("/Board/View", function(req, res) {
 
-  console.log("조회수 확인 : " ,res);
+  const column = req.query
+  console.log(column);
+  console.log(column.no);
+  const query = "UPDATE board SET viewCnt=viewCnt+1 WHERE no = ?";
+
+  connection.query(query, [column.no], function (err, result, field) {
+    if (err) {
+      console.log(err);
+      res.json(err);
+    } else {
+      console.log(result);
+      res.json(result);
+    }
+  });  
 
 });
 
 //상세조회
 app.get("/Board/Regist", function (req, res) {
+
   const query = "SELECT title, content, fileUrl FROM board WHERE NO = ?";
-  const uQuery = "UPDATE board SET viewCnt=viewCnt+1 WHERE no = ?";
-  let returnResult = [];
   const column = req.query;
 
   console.log("데이터 확인 : ", req.query);
@@ -161,27 +173,10 @@ app.get("/Board/Regist", function (req, res) {
       console.log(err);
       res.json(err);
     } else {
-      console.log('column.viewCnt :' ,column.viewCnt);
-      if(column.viewCnt != 1) {
-        res.json(result);
-      }
-      returnResult.push(result);
+      console.log(result);
+      res.json(result);
     }
   });
-
-  if(column.viewCnt == 1) {
-    console.log('column.viewCnt : 실행확인: ',column.viewCnt);
-    connection.query(uQuery, [column.viewCnt, column.no], function (err, result, field) {
-      if (err) {
-        console.log(err);
-        res.json(err);
-      } else {
-        returnResult.push(result);
-        console.log('returnResult :', returnResult);
-        res.json(returnResult);
-      }
-    });  
-  }
 });
 
 //게시판 등록, 수정, 삭제
