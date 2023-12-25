@@ -14,7 +14,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { useRecoilState } from 'recoil';
+import { tokenState } from './GlobalState';
 
 const defaultTheme = createTheme();
 
@@ -23,6 +24,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const login = () => navigate('/Board');
 
+  const [token, setToken] = useRecoilState(tokenState);
   const [inputId, setInputId] = useState("");
   const [inputPw, setInputPw] = useState("");
           
@@ -33,24 +35,27 @@ export default function SignIn() {
     setInputPw(e.target.value);
   }  
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     //const data = new FormData(event.currentTarget); // 추후 로그인 시간 등을 DB 저장
     console.log("id :",inputId, "\n pw :", inputPw);    
 
-    axios.post("http://localhost:3001/login", null,{ params : {
+    try {
+      const response = await axios.post("http://localhost:3001/login", null,{ params : {
         id : inputId,
         pw : inputPw
-      }}).then(function (response) {
-          response.data.length === 0 ? alert("빈값입니다.") : login();
-          console.log(response);
+    }})
+      const id = window.sessionStorage.setItem('id', inputId);
+      console.log("id값 확인 : " , id);
+      setToken(window.sessionStorage.getItem('id'));
 
-          window.sessionStorage.setItem('id', inputId);
-          console.log("id값 확인 : " ,window.sessionStorage.getItem('id'));
+      response.data.length === 0 ? alert("빈값입니다.") : login();    
 
-      });    
-  };
+    } catch (err) {
+      console.log('에러 :', err);
+    }
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>

@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
@@ -7,54 +8,26 @@ import SignUp from './member/SignUp';
 //import TestPage1 from './member/TestPage1';
 //import TestPage2 from './member/TestPage2';
 import Write from './member/Board/Write';
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, useLocation } from "react-router-dom";
 import Board from './member/Board/Board';
-import LeftMenu from "./component/LeftMenu";
-import MenuIcon from '@mui/icons-material/Menu';
+import NabBarDropDown from './member/bootStrap/NavBar';
 
 
 function App() {
 
-  const [topMenu, setTopMenu] = useState('');
-  const location = window.location.href;
-  
-  //url에 따른 topMenu 변경
-  useEffect(() => {
-    
-    if(location.includes('Board')) {
-      setTopMenu('게시판');
-    } else if (location.includes('Login')){ 
-      setTopMenu('로그인');
-    } else if(location.includes('SignUp')) {
-      setTopMenu('회원가입')
-    } else {
-      setTopMenu('로그인');
-    }
-    console.log("topMenu : ", topMenu);
-
-  }, [topMenu]);
+  const [id, setId] = useState(window.sessionStorage.getItem("id"));
 
   return(
     <BrowserRouter>
-        <div> 
-          <AppBar position="static">
-            <Toolbar variant='dense'>
-              <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr : 2}}>
-              <MenuIcon/>
-              </IconButton>
-            <Typography>
-              {topMenu}
-            </Typography>
-            </Toolbar>
-          </AppBar> 
-        </div>     
-      <Routes>
+      { 
+      <NabBarDropDown></NabBarDropDown>
+      }<Routes>
         {/* 웹 서비스 소개 페이지 */}
         <Route path="/Board" element={
         <Board/>
         }>
         </Route>
-        <Route path="/" element={
+        <Route path="/SignIn" element={
         <SignIn/>
         }>
         </Route>
