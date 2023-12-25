@@ -11,8 +11,8 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Board from './member/Board/Board';
 import LeftMenu from "./component/LeftMenu";
 import MenuIcon from '@mui/icons-material/Menu';
-import TopMenu from './adornment/TopeMenu';
-
+import {TopMenu, TopMenuSub, backgrou} from './adornment/TopMenu2.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
 
@@ -38,7 +38,9 @@ function App() {
   return(
     <BrowserRouter>
         <div>
-          <TopMenu></TopMenu>
+          <TopMenu>
+            <TopMenuSub></TopMenuSub>
+          </TopMenu>
         </div>     
       <Routes>
         {/* 웹 서비스 소개 페이지 */}
